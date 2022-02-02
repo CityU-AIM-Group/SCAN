@@ -90,8 +90,11 @@ We present basic instructions about our main modification to understand our code
 
 3. focs_core/modeling/rpn/fcos/fcos.py
     - We find that ensembling the semantic maps and the classification maps (the outputs of semantic conditioned kernels) can achieve a higher result (C2F: 42.3 to 42.8). You have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we use the 'common' mode for a fair comparison.
-  
+ 
+4. DEBUG
+      - We also preserve may debug APIs to save different maps for better understaning our works.
+ 
 ## Contact 
 
-If you have any problems, please feel free to contact me at wuyangli2-c@my.cityu.edu.hk before releasing your issues. Thanks.
+If you have any problems, please feel free to contact me at wuyangli2-c@my.cityu.edu.hk. Thanks.
 
