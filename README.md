@@ -1,17 +1,4 @@
-# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation
-
-The domain gap severely limits the transferability and scalability of object detectors trained in a specific domain when applied to a novel one. Most existing works bridge the domain gap through minimizing the domain discrepancy in the category space and aligning category-agnostic global features. Though great success, these methods model domain discrepancy with prototypes within a batch, yielding a biased estimation of domain-level distribution. Besides, the category-agnostic alignment leads to the disagreement of class-specific distributions in the two domains, further causing inevitable classification errors. To overcome these two challenges, we propose a novel Semantic Conditioned AdaptatioN (SCAN) framework such that well-modeled unbiased semantics can support semantic conditioned adaptation for precise domain adaptive object detection. Specifically, class-specific semantics crossing different images in the source domain are graphically aggregated as the input to learn an unbiased semantic paradigm incrementally. The paradigm is then sent to a lightweight manifestation module to obtain conditional kernels to serve as the role of extracting semantics from the target domain for better adaptation. Subsequently, conditional kernels are integrated into global alignment to support the class-specific adaptation in a designed Conditional Kernel guided Alignment (CKA) module. Meanwhile, rich knowledge of the unbiased paradigm is transferred to the target domain with a novel Graph-based Semantic Transfer (GST) mechanism, yielding the adaptation in the category-based feature space. Comprehensive experiments conducted on three adaptation benchmarks demonstrate that SCAN outperforms existing works by a large margin.
-
-![image](https://github.com/CityU-AIM-Group/SCAN/blob/main/overall.png)
-
-## Well-trained models 
-We provide the experimental results and model weights in this section ([onedrive line](https://portland-my.sharepoint.com/:f:/g/personal/wuyangli2-c_my_cityu_edu_hk/Eso9N-h_saNOt35J7taAEokB23_M6VjXn4xFW9wMP3kR0A?e=Bblcnh)). Kindly note that it is easy to get higher results than the reported ones with tailor-tuned hyperparameters.
-
-| dataset | backbone | mAP	 | mAP@50 |  mAP@75 |	 
-| :-----| :----: | :----: |:-----:| :----: | 
-| Cityscapes -> Foggy Cityscapes | VGG16 | 23.0 |42.3|21.2|
-| Sim10k -> Cityscapes | VGG16 | 27.4 |53.0 |27.4 |
-| KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 |
+# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 oral)
 
 
 ## Installation
@@ -58,6 +45,14 @@ DATA_DIR = [$Your dataset root]
 
 More detailed dataset preparation can be found at [EPM](https://github.com/chengchunhsu/EveryPixelMatters).
 
+## Well-trained models 
+We provide the experimental results and model weights in this section ([onedrive line](https://portland-my.sharepoint.com/:f:/g/personal/wuyangli2-c_my_cityu_edu_hk/Eso9N-h_saNOt35J7taAEokB23_M6VjXn4xFW9wMP3kR0A?e=Bblcnh)). Kindly note that it is easy to get higher results than the reported ones with tailor-tuned hyperparameters.
+
+| dataset | backbone | mAP	 | mAP@50 |  mAP@75 |	 
+| :-----| :----: | :----: |:-----:| :----: | 
+| Cityscapes -> Foggy Cityscapes | VGG16 | 23.0 |42.3|21.2|
+| Sim10k -> Cityscapes | VGG16 | 27.4 |53.0 |27.4 |
+| KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 |
 
 ## Train 
 
@@ -94,6 +89,11 @@ We present basic instructions about our main modification to understand our code
 4. DEBUG
       - We also preserve may debug APIs to save different maps for better understaning our works.
  
+## Abstract
+
+The domain gap severely limits the transferability and scalability of object detectors trained in a specific domain when applied to a novel one. Most existing works bridge the domain gap through minimizing the domain discrepancy in the category space and aligning category-agnostic global features. Though great success, these methods model domain discrepancy with prototypes within a batch, yielding a biased estimation of domain-level distribution. Besides, the category-agnostic alignment leads to the disagreement of class-specific distributions in the two domains, further causing inevitable classification errors. To overcome these two challenges, we propose a novel Semantic Conditioned AdaptatioN (SCAN) framework such that well-modeled unbiased semantics can support semantic conditioned adaptation for precise domain adaptive object detection. Specifically, class-specific semantics crossing different images in the source domain are graphically aggregated as the input to learn an unbiased semantic paradigm incrementally. The paradigm is then sent to a lightweight manifestation module to obtain conditional kernels to serve as the role of extracting semantics from the target domain for better adaptation. Subsequently, conditional kernels are integrated into global alignment to support the class-specific adaptation in a designed Conditional Kernel guided Alignment (CKA) module. Meanwhile, rich knowledge of the unbiased paradigm is transferred to the target domain with a novel Graph-based Semantic Transfer (GST) mechanism, yielding the adaptation in the category-based feature space. Comprehensive experiments conducted on three adaptation benchmarks demonstrate that SCAN outperforms existing works by a large margin.
+
+![image](https://github.com/CityU-AIM-Group/SCAN/blob/main/overall.png)
 ## Contact 
 
 If you have any problems, please feel free to contact me at wuyangli2-c@my.cityu.edu.hk. Thanks.
