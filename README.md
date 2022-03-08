@@ -1,5 +1,6 @@
 # [SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 oral)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
 
+By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
 ## 2022/03/08/ News!
 
