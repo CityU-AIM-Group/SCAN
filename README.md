@@ -1,7 +1,7 @@
 # SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 oral)
 
 
-## News! 
+## 2022/03/08/ News!
 
 Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
 
