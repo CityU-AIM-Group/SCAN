@@ -30,7 +30,7 @@ MODEL:
 
     #  Semantic transfer settings
     TRANSFER_CFG: ('NODES', 'ADJ')     # ('NODES', 'ADJ','PROTOTYPE')
-    GCN_SELF_TRAINING: True
+    GCN_SELF_TRAINING: False
     TARGET_SAMPLING_CFG: 'dbscan'
     DBSCAN_EPS: 3
     DBSCAN_THR: 0.05
