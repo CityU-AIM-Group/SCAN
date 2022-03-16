@@ -347,7 +347,7 @@ def do_train(
             #################### (3): train D with target domain #####################
             ##########################################################################
             #TODO A better dynamic strategy
-            forward_target = AP50_emp == AP50
+            forward_target = AP50_emp > cfg.SOLVER.INITIAL_AP50
 
             loss_dict, features_t, score_maps_t = foward_detector(cfg, model, images_t, return_maps=True, mode='target',forward_target=forward_target)
             loss_dict = {k + "_gt": loss_dict[k] for k in loss_dict}
