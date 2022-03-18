@@ -101,7 +101,7 @@ If you think this work is helpful for your project, please give a star and cite:
 @article{li2022scan,
   title={SCAN: Cross Domain Object Detection with Semantic Conditioned Adaptation},
   author={Li, Wuyang and Liu, Xinyu and Yao, Xiwen and Yuan, Yixuan},
-  booktitle={35th AAAI Conference on Artificial Intelligence (AAAI-21)},
+  booktitle={36th AAAI Conference on Artificial Intelligence (AAAI-22)},
   year={2022}
 }
 ```
