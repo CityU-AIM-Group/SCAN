@@ -2,10 +2,7 @@
 
 By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
-## 2022/03/08/ News!
-
-Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
-
+[2022/03/08/] Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
 
 
 ## Installation
@@ -95,6 +92,20 @@ We present basic instructions about our main modification to understand our code
  
 4. DEBUG
       - We also preserve may debug APIs to save different maps for better understaning our works.
+ 
+ 
+## Citation 
+
+If you think this work is helpful for your project, please give a star and cite:
+```
+@article{li2022scan,
+  title={SCAN: Cross Domain Object Detection with Semantic Conditioned Adaptation},
+  author={Li, Wuyang and Liu, Xinyu and Yao, Xiwen and Yuan, Yixuan},
+  booktitle={35th AAAI Conference on Artificial Intelligence (AAAI-21)},
+  year={2022}
+}
+```
+
  
 ## Abstract
 
