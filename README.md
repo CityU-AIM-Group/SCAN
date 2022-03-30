@@ -1,4 +1,4 @@
-# [SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 oral)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
+# [SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
 
 By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
@@ -82,23 +82,23 @@ python tools/test_net.py \
 ## More Instructions
 We present basic instructions about our main modification to understand our codes better.
 1. focs_core/modeling/rpn/fcos/condgraph.py
-    - We design a "middle head" between feature extractor and detection head for different DA operations on feature maps.
-    - We give lots of APIs for further research, including different kinds of graph, manifestation module, paradigm, and semantic transfer settings, and you can use them by changing the config file directly, (more details are shown in 'fcos_core/config/default.py')
+    - We design a "middle head" between the feature extractor and detection head for different DA operations on feature maps.
+    - We give lots of APIs for further research, including different kinds of graphs, manifestation modules, paradigms, and semantic transfer settings, and you can use them by changing the config file directly, (more details are shown in 'fcos_core/config/default.py')
 
 2. focs_core/modeling/rpn/fcos/loss.py
-    - We sample graph nodes with ground-truth in the source domain, and use DBSCAN to sample target domian nodes.
-    - We have tried different clustering algorithems for target node sampling and preserve the APIs.
+    - We sample graph nodes with ground-truth in the source domain and use DBSCAN to sample target domain nodes.
+    - We have tried different clustering algorithms for target node sampling and preserving the APIs.
 
 3. focs_core/modeling/rpn/fcos/fcos.py
     - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
  
 4. DEBUG
-      - We also preserve may debug APIs to save different maps for better understaning our works.
+      - We also preserve may debug APIs to save different maps for a better understanding of our works.
  
  
 ## Citation 
 
-If you think this work is helpful for your project, please give a star and cite:
+If you think this work is helpful for your project, please give it a star and cite:
 ```
 @article{li2022scan,
   title={SCAN: Cross Domain Object Detection with Semantic Conditioned Adaptation},
