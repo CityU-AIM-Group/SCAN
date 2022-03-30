@@ -2,6 +2,8 @@
 
 By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
+[2022/03/30/] We have found some technical limitations in the proposed SCAN framework, which will be pointed out and solved in SCAN++. Kindly look forward to SCAN++ in our future journal version. If you have some exciting and insightful ideas and suggestions, welcome to add my Wechat for a discussion: 17720031102.
+
 [2022/03/08/] Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
 
 
