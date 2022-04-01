@@ -42,13 +42,30 @@ Step 1: Format three benchmark datasets.
 ```
 
 
-Step 2: change the data root for your dataset at paths_catalog.py.
+Step 2: change the data root for your dataset at [paths_catalog.py](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/config/paths_catalog.py).
 
 ```
 DATA_DIR = [$Your dataset root]
 ```
 
 More detailed dataset preparation can be found at [EPM](https://github.com/chengchunhsu/EveryPixelMatters).
+
+
+## Tutorials for this project
+We present basic instructions about our main modification to understand our codes better.
+1. middle_head: [congraph](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/condgraph.py)
+    - We design a "middle head" between the feature extractor and detection head for different DA operations on feature maps.
+    - We give lots of APIs for further research, including different kinds of graphs, manifestation modules, paradigms, and semantic transfer settings, and you can use them by changing the config file directly, (more details are shown in 'fcos_core/config/default.py')
+
+2. node generation: [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/loss.py)
+    - We sample graph nodes with ground-truth in the source domain and use DBSCAN to sample target domain nodes.
+    - We have tried different clustering algorithms for target node sampling and preserving the APIs.
+
+3. an interesting inference strategy [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/fcos.py)
+    - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
+ 
+4. DEBUGG
+      - We also preserve may debug APIs to save different maps for a better understanding of our works.
 
 ## Well-trained models 
 We provide the experimental results and model weights in this section ([onedrive line](https://portland-my.sharepoint.com/:f:/g/personal/wuyangli2-c_my_cityu_edu_hk/Eso9N-h_saNOt35J7taAEokB23_M6VjXn4xFW9wMP3kR0A?e=Bblcnh)). Kindly note that it is easy to get higher results than the reported ones with tailor-tuned hyperparameters.
@@ -59,13 +76,14 @@ We provide the experimental results and model weights in this section ([onedrive
 | Sim10k -> Cityscapes | VGG16 | 27.4 |53.0 |27.4 |
 | KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 |
 
+
 ## Train 
 
 Use VGG-16 as the backbone with 1 GPU. Our code doesn't support distributed training now and only supports single-GPU training.
 
 ```
 python tools/train_net_da.py \
-        --config configs/scan/xxx.yaml
+        --config-file configs/scan/xxx.yaml
 
 ```
 
@@ -73,31 +91,15 @@ python tools/train_net_da.py \
 
 ```
 python tools/test_net.py \
-        --config configs/scan/xxx.yaml \
-        MODEL.WEIGHT "xxx.pth"
+        --config-file configs/scan/xxx.yaml \
+        MODEL.WEIGHT xxx.pth
 
 ```
 
-## More Instructions
-We present basic instructions about our main modification to understand our codes better.
-1. focs_core/modeling/rpn/fcos/condgraph.py
-    - We design a "middle head" between the feature extractor and detection head for different DA operations on feature maps.
-    - We give lots of APIs for further research, including different kinds of graphs, manifestation modules, paradigms, and semantic transfer settings, and you can use them by changing the config file directly, (more details are shown in 'fcos_core/config/default.py')
-
-2. focs_core/modeling/rpn/fcos/loss.py
-    - We sample graph nodes with ground-truth in the source domain and use DBSCAN to sample target domain nodes.
-    - We have tried different clustering algorithms for target node sampling and preserving the APIs.
-
-3. focs_core/modeling/rpn/fcos/fcos.py
-    - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
- 
-4. DEBUG
-      - We also preserve may debug APIs to save different maps for a better understanding of our works.
- 
  
 ## Citation 
 
-If you think this work is helpful for your project, please give it a star and cite:
+If you think this work is helpful for your project, please give it a star and citation:
 ```
 @article{li2022scan,
   title={SCAN: Cross Domain Object Detection with Semantic Conditioned Adaptation},
