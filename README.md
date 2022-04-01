@@ -46,18 +46,18 @@ More detailed dataset preparation can be found at [EPM](https://github.com/cheng
 
 ## Tutorials for this project
 We present basic instructions about our main modification to understand our codes better.
-1. middle_head: [congraph](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/condgraph.py)
+1. Middle_head: [congraph](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/condgraph.py)
     - We design a "middle head" between the feature extractor and detection head for different DA operations on feature maps.
     - We give lots of APIs for further research, including different kinds of graphs, manifestation modules, paradigms, and semantic transfer settings, and you can use them by changing the config file directly, (more details are shown in 'fcos_core/config/default.py')
 
-2. node generation: [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/loss.py)
+2. Node generation: [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/loss.py)
     - We sample graph nodes with ground-truth in the source domain and use DBSCAN to sample target domain nodes.
     - We have tried different clustering algorithms for target node sampling and preserving the APIs.
 
-3. an interesting inference strategy [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/fcos.py)
+3. An interesting inference strategy [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/fcos.py)
     - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
  
-4. DEBUGG
+4. DEBUGGGG
       - We also preserve may debug APIs to save different maps for a better understanding of our works.
 
 ## Well-trained models 
@@ -70,9 +70,10 @@ We provide the experimental results and model weights in this section ([onedrive
 | KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 |
 
 
-## Train 
+## Get start 
 
-Use VGG-16 as the backbone with 1 GPU. Our code doesn't support distributed training now and only supports single-GPU training.
+Train from the scratch:
+(Use VGG-16 as the backbone with 1 GPU. Our code doesn't support distributed training now and only supports single-GPU training.)
 
 ```
 python tools/train_net_da.py \
@@ -80,7 +81,7 @@ python tools/train_net_da.py \
 
 ```
 
-## Evaluation
+Test with the well trained models:
 
 ```
 python tools/test_net.py \
