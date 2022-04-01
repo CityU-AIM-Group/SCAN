@@ -10,14 +10,7 @@ By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
 Check [INSTALL.md](https://github.com/CityU-AIM-Group/SCAN/blob/main/INSTALL.md) for installation instructions.
 
-This work is based on the EveryPixelMatter (ECCV20) [EPM](https://github.com/chengchunhsu/EveryPixelMatters). 
-
-The implementation of our anchor-free 
-the detector is heavily based on [FCOS](https://github.com/tianzhi0549/FCOS/tree/f0a9731dac1346788cc30d5751177f2695caaa1f).
-
-
-
-## Dataset
+## Data preparation
 
 Step 1: Format three benchmark datasets.
 
@@ -108,6 +101,12 @@ If you think this work is helpful for your project, please give it a star and ci
   year={2022}
 }
 ```
+
+## Acknowledgements
+
+This work is based on the EveryPixelMatter (ECCV20) [EPM](https://github.com/chengchunhsu/EveryPixelMatters). 
+
+The implementation of the detector is heavily based on [FCOS](https://github.com/tianzhi0549/FCOS/tree/f0a9731dac1346788cc30d5751177f2695caaa1f).
 
  
 ## Abstract
