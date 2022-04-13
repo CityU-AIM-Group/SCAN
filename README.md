@@ -55,9 +55,12 @@ We present basic instructions about our main modification to understand our code
     - We have tried different clustering algorithms for target node sampling and preserving the APIs.
 
 3. An interesting inference strategy [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/rpn/fcos/fcos.py)
-    - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision'. Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
- 
-4. DEBUGGGG
+    - We find that ensembling the semantic maps (the outputs of semantic conditioned kernels) and the classification maps can achieve a higher result (C2F: 42.3 to 42.8). You can have a try by changing the TEST.MODE from 'common' to 'precision' in the config file. 
+    - Besides, only using the semantic maps can achieve a comparable result with the standard 4-Conv detection head and reduce computation costs (TEST.MODE =' light'). Kindly note that we still use the 'common' mode for a fair comparison with other methods.
+
+4. CKA module is implemented [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/discriminator/fcos_head_discriminator_con.py)
+
+5. DEBUGGGG
       - We also preserve may debug APIs to save different maps for a better understanding of our works.
 
 ## Well-trained models 

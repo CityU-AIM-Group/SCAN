@@ -1,7 +1,11 @@
+# --------------------------------------------------------
+# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)
+# Written by Wuyang Li
+# This file covers the Conditonal Kernel guided Alignment (CKA)
+# --------------------------------------------------------
 import torch
 import torch.nn.functional as F
 from torch import nn
-
 from .layer import GradientReversal
 
 

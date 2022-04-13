@@ -1,3 +1,9 @@
+# --------------------------------------------------------
+# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)
+# Written by Wuyang Li
+# This file covers the core operation on the feature maps for domain adaptation
+# --------------------------------------------------------
+
 import math
 import torch
 import torch.nn.functional as F
@@ -62,8 +68,9 @@ class PROTOTYPECounter():
 class GRAPHHead(torch.nn.Module):
     def __init__(self, cfg, in_channels, out_channel, mode='in'):
         """
-        Arguments:
-            in_channels (int): number of channels of the input feature
+        Projection layers:
+        tranfer the visual features [0, +INF) to the node embedding (-INF, +INF) 
+
         """
         super(GRAPHHead, self).__init__()
         # TODO: Implement the sigmoid version first.
@@ -114,7 +121,7 @@ class GRAPHHead(torch.nn.Module):
 
 class GRAPHModule(torch.nn.Module):
     """
-    Module for Semantic Middle Head
+    The core module for SCAN
     """
 
     def __init__(self, cfg, in_channels):
@@ -416,19 +423,25 @@ class GRAPHModule(torch.nn.Module):
     def _forward_train_source(self, images, features, targets=None, return_maps=False):
 
         transfer_loss = 0
+
+        # STEP1: sample feature points and conduct cross-image graph aggregation 
         locations = self.compute_locations(features)
         pos_points, pos_labels, act_maps_labels = self.prototype_evaluator(
             locations, features, targets
         )
         node_loss, prototype_batch = self._forward_gcns(pos_points, pos_labels)
+
+
+        # STEP2: update the 3D paradigm recurrently 
         self.update_prototype_ensemble(prototype_batch)
 
-        # obtain prototype conditioned weight
-        conded_weight = self.get_conded_weight()
+        
+        conded_weight = self.get_conded_weight() # obtain semantic conditioned kernels
 
+        # STEP3: generate loss to train the kernels
         if self.act_loss_cfg:
             act_loss, return_act_maps = self.get_act_loss(features, conded_weight, act_maps_labels)
-            features = self.features_post_processing(features, return_act_maps)
+            features = self.features_post_processing(features, return_act_maps) # POST PROCESSING
             return features, (node_loss, transfer_loss), act_loss, return_act_maps
         else:
             return_act_maps = []
@@ -438,7 +451,7 @@ class GRAPHModule(torch.nn.Module):
                     dim=1) if self.act_loss_cfg == 'softmaxFL' else act_maps_logits.sigmoid()
                 return_act_maps.append(act_maps)
 
-            features = self.features_post_processing(features, return_act_maps)
+            features = self.features_post_processing(features, return_act_maps) # POST PROCESSING
             return features, (node_loss, transfer_loss), None, return_act_maps
 
     def get_transfer_loss(self, tg_prototype, tg_nodes, tg_labels):
@@ -485,9 +498,8 @@ class GRAPHModule(torch.nn.Module):
             return None
 
     def _forward_train_target(self, images, features, targets=None, return_maps=False):
-        ##########################################################################
-        #############################  train on tg ###############################
-        ##########################################################################
+
+        # STEP1: use conditioned kernels to obtain activation maps
 
         return_act_maps = []
         for l, feature in enumerate(features):
@@ -498,13 +510,14 @@ class GRAPHModule(torch.nn.Module):
                 dim=1) if self.act_loss_cfg == 'softmaxFL' else act_maps_logits.sigmoid()
             return_act_maps.append(act_maps)
 
+        # STEP2: use activation maps to sample graph nodes
         pos_points, pos_labels, _ = self.prototype_evaluator(
             locations=None, features=features, targets=return_act_maps
         )
-        # POST PROCESSING
-        features = self.features_post_processing(features, return_act_maps)
 
-        # default: self.transfer_cfg: (None,)
+        features = self.features_post_processing(features, return_act_maps)  # POST PROCESSING
+
+        # STEP3: conduct graph-based semantic transfer
         if (pos_points is not None) and ((self.transfer_cfg[0] is not None) or (self.with_self_training is True)):
 
             # node_loss can be used for self-training
@@ -532,7 +545,6 @@ class GRAPHModule(torch.nn.Module):
         return features, None, None, return_act_maps
 
     def forward(self, images, features, targets=None, return_maps=False, mode='source', forward_target=False):
-
 
         features = self.head_in(features)
         if self.training and targets and mode == 'source':

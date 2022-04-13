@@ -1,5 +1,11 @@
+# --------------------------------------------------------
+# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)
+# Modified by Wuyang Li
+# This file contains the detection head of FCOS
+# This file also gives the implementation of three inference strategy:
+# TEST.MODEL: common/ precision/ light
+# --------------------------------------------------------
 import torch
-
 from ..inference import RPNPostProcessor
 from ..utils import permute_and_flatten
 

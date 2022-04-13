@@ -1,8 +1,9 @@
-"""
-This file contains specific functions for computing losses of FCOS
-file
-"""
-
+# --------------------------------------------------------
+# SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)
+# Modified by Wuyang Li
+# This file contains specific functions for computing losses of FCOS
+# This file covers the core operation for node sampling
+# --------------------------------------------------------
 import torch
 from torch.nn import functional as F
 from torch import nn
