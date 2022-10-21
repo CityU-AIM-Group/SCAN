@@ -1,11 +1,11 @@
-# [SCAN: Cross-domain Object Detection with Semantic Conditioned Adaptation (AAAI22 ORAL)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
+# [SCAN++: Enhanced Semantic Conditioned Adaptation for Domain Adaptive Object Detection (TMM)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
 
 By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
 
 [2022/03/08/] Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
 
-
+[2022/10/21/] We give the journal-extended version SCAN++.
 ## Installation
 
 Check [INSTALL.md](https://github.com/CityU-AIM-Group/SCAN/blob/main/INSTALL.md) for installation instructions.
@@ -114,10 +114,9 @@ The implementation of the detector is heavily based on [FCOS](https://github.com
 
  
 ## Abstract
+Domain Adaptive Object Detection (DAOD) transfers an object detector from the labeled source domain to a novel unlabelled target domain. Recent advances bridge the domain gap by aligning category-agnostic feature distribution and minimizing the domain discrepancy for adapting semantic distribution. Though great success, these methods model domain discrepancy with prototypes within a batch, yielding a biased estimation of domain-level statistics. Moreover, the category-agnostic alignment leads to the disagreement of the cross-domain semantic distribution with inevitable classification errors. To address these two issues, we propose an enhanced Semantic Conditioned AdaptatioN (SCAN++) framework, which leverages unbiased semantics for DAOD. Specifically, in the source domain, we design the conditional kernel to sample Pixel of Interests (PoIs), and aggregate PoIs with a cross-image graph to estimate an unbiased semantic sequence. Conditioned on the semantic sequence, we further update the parameter of the conditional kernel in a semantic conditioned manifestation module, and establish a novel conditional graph in the target domain to model unlabeled semantics. After modeling the semantic distribution in both domains, we integrate the conditional kernel into adversarial alignment to achieve semantic-aware adaptation in a Conditional Kernel guided Alignment (CKA) module. Meanwhile, the Semantic Sequence guided Transport (SST) module is proposed to transfer reliable semantic knowledge to the target domain through solving the cross-domain Optimal Transport (OT) assignment, achieving unbiased adaptation at the semantic level. Comprehensive experiments on four adaptation scenarios demonstrate that SCAN++ achieves state-of-the-art results. 
 
-The domain gap severely limits the transferability and scalability of object detectors trained in a specific domain when applied to a novel one. Most existing works bridge the domain gap through minimizing the domain discrepancy in the category space and aligning category-agnostic global features. Though great success, these methods model domain discrepancy with prototypes within a batch, yielding a biased estimation of domain-level distribution. Besides, the category-agnostic alignment leads to the disagreement of class-specific distributions in the two domains, further causing inevitable classification errors. To overcome these two challenges, we propose a novel Semantic Conditioned AdaptatioN (SCAN) framework such that well-modeled unbiased semantics can support semantic conditioned adaptation for precise domain adaptive object detection. Specifically, class-specific semantics crossing different images in the source domain are graphically aggregated as the input to learn an unbiased semantic paradigm incrementally. The paradigm is then sent to a lightweight manifestation module to obtain conditional kernels to serve as the role of extracting semantics from the target domain for better adaptation. Subsequently, conditional kernels are integrated into global alignment to support the class-specific adaptation in a designed Conditional Kernel guided Alignment (CKA) module. Meanwhile, rich knowledge of the unbiased paradigm is transferred to the target domain with a novel Graph-based Semantic Transfer (GST) mechanism, yielding the adaptation in the category-based feature space. Comprehensive experiments conducted on three adaptation benchmarks demonstrate that SCAN outperforms existing works by a large margin.
 
-![image](https://github.com/CityU-AIM-Group/SCAN/blob/main/overall.png)
 ## Contact 
 
 If you have any problems, please feel free to contact me at wuyangli2-c@my.cityu.edu.hk. Thanks.
