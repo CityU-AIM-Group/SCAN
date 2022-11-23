@@ -17,7 +17,7 @@ from fcos_core.utils.miscellaneous import mkdir
 from .validation import _inference
 from fcos_core.utils.comm import synchronize
 
-def foward_detector(cfg, model, images, targets=None, return_maps=True, mode='source', forward_target=False):
+def foward_detector(cfg, model, images, targets=None, return_maps=True,forward_target=False):
     with_middle_head = cfg.MODEL.MIDDLE_HEAD.CONDGRAPH_ON
     map_layer_to_index = {"P3": 0, "P4": 1, "P5": 2, "P6": 3, "P7": 4}
     feature_layers = map_layer_to_index.keys()
@@ -30,25 +30,15 @@ def foward_detector(cfg, model, images, targets=None, return_maps=True, mode='so
     losses = {}
     if with_middle_head:
         model_middle_head = model["middle_head"]
-        features, loss_graph, loss_act_map, return_act_maps = model_middle_head(images, features, targets=targets,
-                                           return_maps=return_maps, mode = mode, forward_target=forward_target)
-        if loss_graph is not None:
-            node_loss, consistency_loss = loss_graph
-            if consistency_loss:
-                consistency_loss = {"consistency_loss": consistency_loss}
-                losses.update(consistency_loss)
-            if node_loss:
-                node_loss = {"node_loss": node_loss}
-                losses.update(node_loss)
-        if loss_act_map is not None:
-            act_loss = {"act_loss": loss_act_map}
-            losses.update(act_loss)
+        features, loss_middle_head, return_act_maps = model_middle_head(images, features, targets=targets,
+                                           return_maps=return_maps, forward_target=forward_target)
+        losses.update(loss_middle_head)
+
     else:
         return_act_maps = None
 
     proposals, proposal_losses, score_maps = model_fcos(
         images, features, targets=targets, return_maps=return_maps, act_maps=return_act_maps)
-
 
     f = {
         layer: features[map_layer_to_index[layer]]
@@ -106,7 +96,7 @@ def validataion(cfg, model, data_loader, distributed=False):
     assert len(data_loader) == 1, "More than one validation sets!"
     data_loader = data_loader[0]
     # for  dataset_name, data_loader_val in zip( dataset_names, data_loader):
-    results, _ = _inference(
+    results = _inference(
         cfg,
         model,
         data_loader,
@@ -135,6 +125,7 @@ def do_train(
         meters,
 ):
     with_DA = cfg.MODEL.DA_ON
+    stage_2_ON = False
     data_loader_source = data_loader["source"]
     # Start training
     logger = logging.getLogger("fcos_core.trainer")
@@ -147,7 +138,7 @@ def do_train(
     start_training_time = time.time()
     end = time.time()
     AP50 = cfg.SOLVER.INITIAL_AP50
-    AP50_emp = 0
+    AP50_online = 0
     pytorch_1_1_0_or_later = is_pytorch_1_1_0_or_later()
 
     if not with_DA:
@@ -213,14 +204,14 @@ def do_train(
                 if iteration % cfg.SOLVER.VAL_ITER == 0:
                     val_results = validataion(cfg, model, data_loader["val"], distributed)
                     # used for saving model
-                    AP50_emp = val_results.results['bbox'][cfg.SOLVER.VAL_TYPE] * 100
+                    AP50_online = val_results.results['bbox'][cfg.SOLVER.VAL_TYPE] * 100
                     # used for logging
                     meter_AP50= val_results.results['bbox']['AP50'] * 100
                     meter_AP = val_results.results['bbox']['AP']* 100
                     meters.update(AP = meter_AP, AP50 = meter_AP50 )
 
-                    if AP50_emp > AP50:
-                        AP50 = AP50_emp
+                    if AP50_online > AP50:
+                        AP50 = AP50_online
                         checkpointer.save("model_{}_{:07d}".format(AP50, iteration), **arguments)
                         print('***warning****,\n best model updated. {}: {}, iter: {}'.format(cfg.SOLVER.VAL_TYPE, AP50,
                                                                                            iteration))
@@ -286,7 +277,7 @@ def do_train(
             ##########################################################################
 
             loss_dict, features_s, score_maps_s = foward_detector(cfg,
-                model, images_s, targets=targets_s, return_maps=True, mode='source')
+                model, images_s, targets=targets_s, return_maps=True)
 
 
             loss_dict = {k + "_gs": loss_dict[k] for k in loss_dict}
@@ -347,9 +338,11 @@ def do_train(
             #################### (3): train D with target domain #####################
             ##########################################################################
             #TODO A better dynamic strategy
-            forward_target = AP50_emp > cfg.SOLVER.INITIAL_AP50
+            forward_target = AP50_online > cfg.SOLVER.INITIAL_AP50
+            # forward_target = iteration>1000
+            # forward_target = True
 
-            loss_dict, features_t, score_maps_t = foward_detector(cfg, model, images_t, return_maps=True, mode='target',forward_target=forward_target)
+            loss_dict, features_t, score_maps_t = foward_detector(cfg, model, images_t, return_maps=True, forward_target=forward_target)
             loss_dict = {k + "_gt": loss_dict[k] for k in loss_dict}
             # losses = sum(loss for loss in loss_dict.values())
             # assert len(loss_dict) == 1 and loss_dict["zero"] == 0  # loss_dict should be empty dict
@@ -462,25 +455,31 @@ def do_train(
                         memory=torch.cuda.max_memory_allocated() / 1024.0 / 1024.0,
                     ))
 
-            if cfg.SOLVER.ADAPT_VAL_ON:
-                if iteration % cfg.SOLVER.VAL_ITER== 0:
+            if cfg.SOLVER.ADAPT_VAL_ON :
+                if iteration % cfg.SOLVER.VAL_ITER == 0:
                     val_results = validataion(cfg, model, data_loader["val"], distributed)
-                    # used for saving model
-                    AP50_emp = val_results.results['bbox'][cfg.SOLVER.VAL_TYPE] * 100
-                    # used for logging
-                    meter_AP50 = val_results.results['bbox']['AP50'] * 100
-                    meter_AP = val_results.results['bbox']['AP'] * 100
-                    meters.update(AP=meter_AP, AP50=meter_AP50)
 
-                    if AP50_emp > AP50:
+                    if type(val_results)== dict:
+                        AP50_online = val_results['map'] * 100
+                        meters.update(AP50=AP50_online)
+                    else:
+                        val_results = val_results[0]
+                        # used for saving model
+                        AP50_online = val_results.results['bbox'][cfg.SOLVER.VAL_TYPE] * 100
+                        # used for logging
+                        meter_AP50 = val_results.results['bbox']['AP50'] * 100
+                        meter_AP = val_results.results['bbox']['AP'] * 100
+                        meters.update(AP=meter_AP, AP50=meter_AP50)
 
-                        AP50 = AP50_emp
+                    if AP50_online > AP50:
+                        stage_2_ON = True
+                        AP50 = AP50_online
                         checkpointer.save("model_{}_{:07d}".format(AP50, iteration), **arguments)
                         print('***warning****,\n best model updated. {}: {}, iter: {}'.format(cfg.SOLVER.VAL_TYPE, AP50, iteration))
-                    if distributed:
-                        model["backbone"] = model["backbone"].module
-                        model["middle_head"] = model["middle_head"].module
-                        model["fcos"] = model["fcos"].module
+                    # if distributed:
+                    #     model["backbone"] = model["backbone"].module
+                    #     model["middle_head"] = model["middle_head"].module
+                    #     model["fcos"] = model["fcos"].module
                     for k in model:
                         model[k].train()
             else:

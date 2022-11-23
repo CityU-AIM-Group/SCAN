@@ -1,11 +1,11 @@
-# [SCAN++: Enhanced Semantic Conditioned Adaptation for Domain Adaptive Object Detection (TMM)](https://www.aaai.org/AAAI22Papers/AAAI-902.LiW.pdf)
+# [SCAN++: Enhanced Semantic Conditioned Adaptation for Domain Adaptive Object Detection (TMM)](https://ieeexplore.ieee.org/document/9931144)
 
 By [Wuyang Li](https://wymancv.github.io/wuyang.github.io/)
 
 
 [2022/03/08/] Welcome to follow our new work [SIGMA](https://github.com/CityU-AIM-Group/SIGMA), which is a comprehensive upgrade of this work (SCAN).
 
-[2022/10/21/] We give the journal-extended version SCAN++.
+[2022/10/21/] The journal-extended version SCAN++ has been released.
 ## Installation
 
 Check [INSTALL.md](https://github.com/CityU-AIM-Group/SCAN/blob/main/INSTALL.md) for installation instructions.
@@ -61,16 +61,16 @@ We present basic instructions about our main modification to understand our code
 4. CKA module is implemented [here](https://github.com/CityU-AIM-Group/SCAN/blob/main/fcos_core/modeling/discriminator/fcos_head_discriminator_con.py)
 
 5. DEBUGGGG
-      - We also preserve may debug APIs to save different maps for a better understanding of our works.
+      - We also preserve may debug APIs to save different maps.
 
-## Well-trained models 
+<!-- ## Well-trained models 
 We provide the experimental results and model weights in this section ([onedrive line](https://portland-my.sharepoint.com/:f:/g/personal/wuyangli2-c_my_cityu_edu_hk/Eso9N-h_saNOt35J7taAEokB23_M6VjXn4xFW9wMP3kR0A?e=Bblcnh)). Kindly note that it is easy to get higher results than the reported ones with tailor-tuned hyperparameters.
 
 | dataset | backbone | mAP	 | mAP@50 |  mAP@75 |	 
 | :-----| :----: | :----: |:-----:| :----: | 
 | Cityscapes -> Foggy Cityscapes | VGG16 | 23.0 |42.3|21.2|
 | Sim10k -> Cityscapes | VGG16 | 27.4 |53.0 |27.4 |
-| KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 |
+| KITTI -> Cityscapes | VGG16 | 23.0 |46.3 |20.9 | -->
 
 
 ## Get start 
@@ -104,6 +104,18 @@ If you think this work is helpful for your project, please give it a star and ci
   booktitle={36th AAAI Conference on Artificial Intelligence (AAAI-22)},
   year={2022}
 }
+
+@ARTICLE{9931144,
+  author={Li, Wuyang and Liu, Xinyu and Yuan, Yixuan},
+  journal={IEEE Transactions on Multimedia}, 
+  title={SCAN++: Enhanced Semantic Conditioned Adaptation for Domain Adaptive Object Detection}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={1-11},
+  doi={10.1109/TMM.2022.3217388}}
+
+
 ```
 
 ## Acknowledgements
