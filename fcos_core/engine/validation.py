@@ -16,12 +16,11 @@ from fcos_core.structures.image_list import to_image_list
 def _foward_detector(cfg, model, images, targets=None, return_maps=False):
     model_backbone = model["backbone"]
     model_fcos = model["fcos"]
-
     images = to_image_list(images)
     features = model_backbone(images.tensors)
     if cfg.MODEL.MIDDLE_HEAD.CONDGRAPH_ON:
         middle_head = model["middle_head"]
-        features, _, _, return_act_maps = middle_head(images, features,return_maps=True)
+        features, _, return_act_maps = middle_head(images, features,return_maps=True)
     else:
         return_act_maps = None
     proposals, proposal_losses, score_maps = model_fcos(
