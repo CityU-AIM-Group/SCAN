@@ -26,6 +26,7 @@ class dot_attention(nn.Module):
         if attn_mask:
             attention = attention.masked_fill(attn_mask, -np.inf)     # 给需要mask的地方设置一个负无穷。
         # 计算softmax
+
         attention = self.softmax(attention)
         # 添加dropout
         attention = self.dropout(attention)
@@ -35,7 +36,7 @@ class dot_attention(nn.Module):
 
 class MultiHeadAttention(nn.Module):
     """ 多头自注意力"""
-    def __init__(self, model_dim=400, num_heads=4, dropout=0.0):
+    def __init__(self, model_dim=256, num_heads=4, dropout=0.0, version='v2'):
         super(MultiHeadAttention, self).__init__()
 
         self.dim_per_head = model_dim//num_heads   # 每个头的维度
@@ -49,43 +50,88 @@ class MultiHeadAttention(nn.Module):
         self.linear_final = nn.Linear(model_dim, model_dim)
         self.dropout = nn.Dropout(dropout)
         self.layer_norm = nn.LayerNorm(model_dim)         # LayerNorm 归一化。
+        self.version  = version
 
     def forward(self, key, value, query, attn_mask=None):
-        # 残差连接
+
+
+        key = key.unsqueeze(1)
+        value = value.unsqueeze(1)
+        query = query.unsqueeze(1)
         residual = query
+
 
         dim_per_head = self.dim_per_head
         num_heads = self.num_heads
-        batch_size = key.size(0)
 
-        # 线性映射。
+
         key = self.linear_k(key)
         value = self.linear_v(value)
         query = self.linear_q(query)
 
-        # 按照头进行分割
-        key = key.view(batch_size * num_heads, -1, dim_per_head)
-        value = value.view(batch_size * num_heads, -1, dim_per_head)
-        query = query.view(batch_size * num_heads, -1, dim_per_head)
+        key = key.view(key.size(0),  num_heads, dim_per_head).transpose(0,1)
+        value = value.view(value.size(0), num_heads, dim_per_head).transpose(0,1)
+        query = query.view(query.size(0), num_heads, dim_per_head).transpose(0,1)
 
-        if attn_mask:
-            attn_mask = attn_mask.repeat(num_heads, 1, 1)
-
-        # 缩放点击注意力机制
         scale = (key.size(-1) // num_heads) ** -0.5
         context, attention = self.dot_product_attention(query, key, value, scale, attn_mask)
-
-        # 进行头合并 concat heads
-        context = context.view(batch_size, -1, dim_per_head * num_heads)
-
-        # 进行线性映射
+        # (query, key, value, scale, attn_mask)
+        context = context.transpose(0, 1).contiguous().view(query.size(1), 1, dim_per_head * num_heads)
         output = self.linear_final(context)
-
         # dropout
         output = self.dropout(output)
-
-        # 添加残差层和正则化层。
         output = self.layer_norm(residual + output)
 
-        return output, attention
+        return output.squeeze(), attention.squeeze()
 
+
+
+
+class CrossGraph(nn.Module):
+    """ 多头自注意力"""
+    def __init__(self, model_dim=256,  dropout=0.0,):
+        super(CrossGraph, self).__init__()
+
+
+        self.linear_edge = nn.Linear(model_dim, model_dim)
+        # self.linear_edge2 = nn.Linear(model_dim,model_dim)
+        self.linear_node1 = nn.Linear(model_dim,model_dim)
+        self.linear_node2 = nn.Linear(model_dim,model_dim)
+
+        self.dot_product_attention = dot_attention(dropout)
+
+        self.linear_final = nn.Linear(model_dim, model_dim)
+        self.dropout = nn.Dropout(dropout)
+        self.layer_norm = nn.LayerNorm(model_dim)         # LayerNorm 归一化。
+
+
+    def forward(self, node_1, node_2,  attn_mask=None):
+        node_1_r = node_1
+        node_2_r = node_2
+
+        edge1 = self.linear_edge(node_1)
+        edge2 = self.linear_edge(node_2)
+
+        node_1_ = self.linear_node1(node_1)
+        node_2_ = self.linear_node1(node_2)
+
+        attention = torch.mm(edge1,edge2.t())
+
+        node_1 = torch.mm(attention.softmax(-1), node_2_)
+        node_2 = torch.mm(attention.t().softmax(-1), node_1_)
+
+
+        node_1 = self.linear_final(node_1)
+        node_2 = self.linear_final(node_2)
+
+        node_1 = self.dropout(node_1)
+        node_2  = self.dropout(node_2)
+
+        # 添加残差层和正则化层。
+        node_1 = self.layer_norm(node_1_r + node_1)
+
+        node_2 = self.layer_norm(node_2_r + node_2)
+
+
+
+        return node_1, node_2
